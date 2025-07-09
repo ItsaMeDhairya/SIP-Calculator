@@ -1,0 +1,910 @@
+<!doctype html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <title>SIP Calculator</title>
+    </head>
+    <body>
+        <div class="sip-calculator" id="sipCalculator">
+            <style>
+                * {
+                    margin: 0;
+                    padding: 0;
+                    
+                }
+
+                body {
+                    background: #f5f7fa;
+                    padding: 20px;
+                    min-height: 100vh;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                }
+
+                .sip-calculator {
+                    font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                    background: #ffffff;
+                    border-radius: 16px;
+                    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+                    padding: 32px;
+                    max-width: 600px;
+                    width: 100%;
+                    border: 1px solid #e1e8ed;
+                    box-sizing: border-box;
+                }
+
+                .calculator-header {
+                    text-align: center;
+                    margin-bottom: 32px;
+                }
+
+                .calculator-title {
+                    font-size: 28px;
+                    font-weight: 700;
+                    color: #1a365d;
+                    margin-bottom: 8px;
+                }
+
+                .calculator-subtitle {
+                    font-size: 16px;
+                    color: #64748b;
+                    line-height: 1.5;
+                }
+
+                .input-section {
+                    margin-bottom: 32px;
+                }
+
+                .input-group {
+                    margin-bottom: 24px;
+                }
+
+                .input-label {
+                    display: block;
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #374151;
+                    margin-bottom: 8px;
+                }
+
+                .input-container {
+                    display: flex;
+                    gap: 12px;
+                    align-items: center;
+                }
+
+                .slider-container {
+                    flex: 1;
+                    position: relative;
+                }
+
+                .range-slider {
+                    width: 100%;
+                    height: 6px;
+                    border-radius: 3px;
+                    background: #e2e8f0;
+                    outline: none;
+                    appearance: none;
+                    -webkit-appearance: none;
+                    cursor: pointer;
+                }
+
+                .range-slider::-webkit-slider-thumb {
+                    appearance: none;
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background: #3b82f6;
+                    cursor: pointer;
+                    border: 2px solid #ffffff;
+                    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+                    transition: all 0.2s ease;
+                }
+
+                .range-slider::-webkit-slider-thumb:hover {
+                    transform: scale(1.1);
+                    box-shadow: 0 4px 12px rgba(59, 130, 246, 0.4);
+                }
+
+                .range-slider::-moz-range-thumb {
+                    width: 20px;
+                    height: 20px;
+                    border-radius: 50%;
+                    background: #3b82f6;
+                    cursor: pointer;
+                    border: 2px solid #ffffff;
+                    box-shadow: 0 2px 8px rgba(59, 130, 246, 0.3);
+                    transition: all 0.2s ease;
+                }
+
+                .text-input {
+                    width: 120px;
+                    padding: 10px 12px;
+                    border: 2px solid #e2e8f0;
+                    border-radius: 8px;
+                    font-size: 14px;
+                    font-weight: 500;
+                    text-align: center;
+                    background: #ffffff;
+                    color: #374151;
+                    transition: border-color 0.2s ease;
+                }
+
+                .text-input:focus {
+                    outline: none;
+                    border-color: #3b82f6;
+                    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+                }
+
+                .input-unit {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #64748b;
+                    min-width: 40px;
+                }
+
+                .button-group {
+                    display: flex;
+                    gap: 16px;
+                    margin-bottom: 32px;
+                }
+
+                .btn {
+                    padding: 14px 28px;
+                    border: none;
+                    border-radius: 8px;
+                    font-size: 16px;
+                    font-weight: 600;
+                    cursor: pointer;
+                    transition: all 0.2s ease;
+                    flex: 1;
+                }
+
+                .btn-calculate {
+                    background: linear-gradient(135deg, #3b82f6, #1d4ed8);
+                    color: #ffffff;
+                    box-shadow: 0 4px 16px rgba(59, 130, 246, 0.3);
+                }
+
+                .btn-calculate:hover {
+                    transform: translateY(-2px);
+                    box-shadow: 0 6px 20px rgba(59, 130, 246, 0.4);
+                }
+
+                .btn-calculate:active {
+                    transform: translateY(0);
+                }
+
+                .btn-reset {
+                    background: #ffffff;
+                    color: #64748b;
+                    border: 2px solid #e2e8f0;
+                }
+
+                .btn-reset:hover {
+                    background: #f8fafc;
+                    border-color: #cbd5e1;
+                    color: #475569;
+                }
+
+                .results-section {
+                    background: linear-gradient(135deg, #f8fafc, #f1f5f9);
+                    border-radius: 12px;
+                    padding: 24px;
+                    border: 1px solid #e2e8f0;
+                }
+
+                .results-title {
+                    font-size: 18px;
+                    font-weight: 700;
+                    color: #1a365d;
+                    margin-bottom: 20px;
+                    text-align: center;
+                }
+
+                .result-item {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    margin-bottom: 16px;
+                    padding: 12px 16px;
+                    background: #ffffff;
+                    border-radius: 8px;
+                    border: 1px solid #e2e8f0;
+                }
+
+                .result-item:last-child {
+                    margin-bottom: 0;
+                    background: linear-gradient(135deg, #dcfdf7, #a7f3d0);
+                    border-color: #6ee7b7;
+                }
+
+                .result-label {
+                    font-size: 14px;
+                    font-weight: 500;
+                    color: #374151;
+                }
+
+                .result-value {
+                    font-size: 16px;
+                    font-weight: 700;
+                    color: #1a365d;
+                }
+
+                .result-item:last-child .result-value {
+                    color: #065f46;
+                    font-size: 18px;
+                }
+
+                .chart-container {
+                    margin-top: 20px;
+                    text-align: center;
+                }
+
+                .chart-bar {
+                    display: flex;
+                    height: 40px;
+                    border-radius: 20px;
+                    overflow: hidden;
+                    background: #e2e8f0;
+                    margin: 12px 0;
+                }
+
+                .chart-investment {
+                    background: linear-gradient(90deg, #3b82f6, #1d4ed8);
+                    transition: width 0.3s ease;
+                }
+
+                .chart-returns {
+                    background: linear-gradient(90deg, #10b981, #059669);
+                    transition: width 0.3s ease;
+                }
+
+                .chart-legend {
+                    display: flex;
+                    justify-content: center;
+                    gap: 24px;
+                    margin-top: 12px;
+                }
+
+                .legend-item {
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    font-size: 12px;
+                    color: #64748b;
+                }
+
+                .legend-color {
+                    width: 12px;
+                    height: 12px;
+                    border-radius: 2px;
+                }
+
+                .legend-investment {
+                    background: #3b82f6;
+                }
+
+                .legend-returns {
+                    background: #10b981;
+                }
+
+                /* Responsive Design */
+                @media (max-width: 768px) {
+                    .sip-calculator {
+                        padding: 24px 16px;
+                        margin: 10px;
+                    }
+
+                    .calculator-title {
+                        font-size: 24px;
+                    }
+
+                    .input-container {
+                        flex-direction: column;
+                        gap: 8px;
+                    }
+
+                    .text-input {
+                        width: 100%;
+                    }
+
+                    .button-group {
+                        flex-direction: column;
+                    }
+
+                    .chart-legend {
+                        flex-direction: column;
+                        gap: 12px;
+                    }
+                }
+
+                @media (max-width: 480px) {
+                    body {
+                        padding: 10px;
+                    }
+
+                    .sip-calculator {
+                        padding: 20px 12px;
+                    }
+
+                    .calculator-title {
+                        font-size: 20px;
+                    }
+
+                    .result-item {
+                        flex-direction: column;
+                        text-align: center;
+                        gap: 8px;
+                    }
+                }
+
+                /* Animation for results */
+                .results-section.show {
+                    animation: slideUp 0.3s ease;
+                }
+
+                @keyframes slideUp {
+                    from {
+                        opacity: 0;
+                        transform: translateY(20px);
+                    }
+                    to {
+                        opacity: 1;
+                        transform: translateY(0);
+                    }
+                }
+
+                /* Loading state */
+                .calculating {
+                    opacity: 0.7;
+                    pointer-events: none;
+                }
+
+                /* Error state */
+                .error {
+                    border-color: #ef4444 !important;
+                    box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1) !important;
+                }
+
+                .error-message {
+                    color: #dc2626;
+                    font-size: 12px;
+                    margin-top: 4px;
+                    display: none;
+                }
+
+                .error-message.show {
+                    display: block;
+                }
+            </style>
+            <div class="calculator-header">
+                <h1 class="calculator-title">SIP Calculator</h1>
+                <p class="calculator-subtitle">
+                    Calculate your Systematic Investment Plan returns with our
+                    easy-to-use calculator
+                </p>
+            </div>
+
+            <div class="input-section">
+                <div class="input-group">
+                    <label class="input-label" for="monthlyInvestment"
+                        >Monthly Investment Amount</label
+                    >
+                    <div class="input-container">
+                        <div class="slider-container">
+                            <input
+                                type="range"
+                                id="monthlyInvestmentSlider"
+                                class="range-slider"
+                                min="500"
+                                max="100000"
+                                value="5000"
+                                step="500"
+                            />
+                        </div>
+                        <input
+                            type="number"
+                            id="monthlyInvestment"
+                            class="text-input"
+                            min="500"
+                            max="100000"
+                            value="5000"
+                            step="500"
+                        />
+                        <span class="input-unit">₹</span>
+                    </div>
+                    <div class="error-message" id="monthlyError">
+                        Please enter a valid amount between ₹500 and ₹1,00,000
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="timePeriod"
+                        >Investment Period</label
+                    >
+                    <div class="input-container">
+                        <div class="slider-container">
+                            <input
+                                type="range"
+                                id="timePeriodSlider"
+                                class="range-slider"
+                                min="1"
+                                max="60"
+                                value="10"
+                                step="1"
+                            />
+                        </div>
+                        <input
+                            type="number"
+                            id="timePeriod"
+                            class="text-input"
+                            min="1"
+                            max="60"
+                            value="10"
+                            step="1"
+                        />
+                        <span class="input-unit">Years</span>
+                    </div>
+                    <div class="error-message" id="periodError">
+                        Please enter a valid period between 1 and 60 years
+                    </div>
+                </div>
+
+                <div class="input-group">
+                    <label class="input-label" for="expectedReturn"
+                        >Expected Annual Return</label
+                    >
+                    <div class="input-container">
+                        <div class="slider-container">
+                            <input
+                                type="range"
+                                id="expectedReturnSlider"
+                                class="range-slider"
+                                min="1"
+                                max="30"
+                                value="12"
+                                step="0.5"
+                            />
+                        </div>
+                        <input
+                            type="number"
+                            id="expectedReturn"
+                            class="text-input"
+                            min="1"
+                            max="30"
+                            value="12"
+                            step="0.5"
+                        />
+                        <span class="input-unit">%</span>
+                    </div>
+                    <div class="error-message" id="returnError">
+                        Please enter a valid return between 1% and 30%
+                    </div>
+                </div>
+            </div>
+
+            <div class="button-group">
+                <button class="btn btn-calculate" id="calculateBtn">
+                    Calculate SIP
+                </button>
+                <button class="btn btn-reset" id="resetBtn">Reset</button>
+            </div>
+
+            <div
+                class="results-section"
+                id="resultsSection"
+                style="display: none"
+            >
+                <h3 class="results-title">Investment Summary</h3>
+
+                <div class="result-item">
+                    <span class="result-label">Total Investment</span>
+                    <span class="result-value" id="totalInvestment">₹0</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">Total Returns</span>
+                    <span class="result-value" id="totalReturns">₹0</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">Maturity Amount</span>
+                    <span class="result-value" id="maturityAmount">₹0</span>
+                </div>
+
+                <div class="chart-container">
+                    <div class="chart-bar">
+                        <div
+                            class="chart-investment"
+                            id="chartInvestment"
+                        ></div>
+                        <div class="chart-returns" id="chartReturns"></div>
+                    </div>
+                    <div class="chart-legend">
+                        <div class="legend-item">
+                            <div class="legend-color legend-investment"></div>
+                            <span>Total Investment</span>
+                        </div>
+                        <div class="legend-item">
+                            <div class="legend-color legend-returns"></div>
+                            <span>Total Returns</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <script>
+                class SIPCalculator {
+                    constructor() {
+                        this.initializeElements();
+                        this.bindEvents();
+                        this.setupRealtimeCalculation();
+                    }
+
+                    initializeElements() {
+                        // Input elements
+                        this.monthlyInvestmentSlider = document.getElementById(
+                            "monthlyInvestmentSlider",
+                        );
+                        this.monthlyInvestment =
+                            document.getElementById("monthlyInvestment");
+                        this.timePeriodSlider =
+                            document.getElementById("timePeriodSlider");
+                        this.timePeriod = document.getElementById("timePeriod");
+                        this.expectedReturnSlider = document.getElementById(
+                            "expectedReturnSlider",
+                        );
+                        this.expectedReturn =
+                            document.getElementById("expectedReturn");
+
+                        // Button elements
+                        this.calculateBtn =
+                            document.getElementById("calculateBtn");
+                        this.resetBtn = document.getElementById("resetBtn");
+
+                        // Result elements
+                        this.resultsSection =
+                            document.getElementById("resultsSection");
+                        this.totalInvestment =
+                            document.getElementById("totalInvestment");
+                        this.totalReturns =
+                            document.getElementById("totalReturns");
+                        this.maturityAmount =
+                            document.getElementById("maturityAmount");
+                        this.chartInvestment =
+                            document.getElementById("chartInvestment");
+                        this.chartReturns =
+                            document.getElementById("chartReturns");
+
+                        // Error elements
+                        this.monthlyError =
+                            document.getElementById("monthlyError");
+                        this.periodError =
+                            document.getElementById("periodError");
+                        this.returnError =
+                            document.getElementById("returnError");
+                    }
+
+                    bindEvents() {
+                        // Slider and input synchronization
+                        this.monthlyInvestmentSlider.addEventListener(
+                            "input",
+                            (e) => {
+                                this.monthlyInvestment.value = e.target.value;
+                                this.validateInput("monthly");
+                            },
+                        );
+
+                        this.monthlyInvestment.addEventListener(
+                            "input",
+                            (e) => {
+                                this.monthlyInvestmentSlider.value =
+                                    e.target.value;
+                                this.validateInput("monthly");
+                            },
+                        );
+
+                        this.timePeriodSlider.addEventListener("input", (e) => {
+                            this.timePeriod.value = e.target.value;
+                            this.validateInput("period");
+                        });
+
+                        this.timePeriod.addEventListener("input", (e) => {
+                            this.timePeriodSlider.value = e.target.value;
+                            this.validateInput("period");
+                        });
+
+                        this.expectedReturnSlider.addEventListener(
+                            "input",
+                            (e) => {
+                                this.expectedReturn.value = e.target.value;
+                                this.validateInput("return");
+                            },
+                        );
+
+                        this.expectedReturn.addEventListener("input", (e) => {
+                            this.expectedReturnSlider.value = e.target.value;
+                            this.validateInput("return");
+                        });
+
+                        // Button events
+                        this.calculateBtn.addEventListener("click", () =>
+                            this.calculateSIP(),
+                        );
+                        this.resetBtn.addEventListener("click", () =>
+                            this.resetCalculator(),
+                        );
+                    }
+
+                    setupRealtimeCalculation() {
+                        // Calculate automatically when inputs change (with debounce)
+                        let timeout;
+                        const inputs = [
+                            this.monthlyInvestment,
+                            this.timePeriod,
+                            this.expectedReturn,
+                        ];
+
+                        inputs.forEach((input) => {
+                            input.addEventListener("input", () => {
+                                clearTimeout(timeout);
+                                timeout = setTimeout(() => {
+                                    if (this.validateAllInputs()) {
+                                        this.calculateSIP();
+                                    }
+                                }, 500);
+                            });
+                        });
+
+                        // Initial calculation
+                        setTimeout(() => this.calculateSIP(), 100);
+                    }
+
+                    validateInput(type) {
+                        let isValid = true;
+
+                        switch (type) {
+                            case "monthly":
+                                const monthlyValue = parseFloat(
+                                    this.monthlyInvestment.value,
+                                );
+                                if (
+                                    isNaN(monthlyValue) ||
+                                    monthlyValue < 500 ||
+                                    monthlyValue > 100000
+                                ) {
+                                    this.monthlyInvestment.classList.add(
+                                        "error",
+                                    );
+                                    this.monthlyError.classList.add("show");
+                                    isValid = false;
+                                } else {
+                                    this.monthlyInvestment.classList.remove(
+                                        "error",
+                                    );
+                                    this.monthlyError.classList.remove("show");
+                                }
+                                break;
+
+                            case "period":
+                                const periodValue = parseFloat(
+                                    this.timePeriod.value,
+                                );
+                                if (
+                                    isNaN(periodValue) ||
+                                    periodValue < 1 ||
+                                    periodValue > 60
+                                ) {
+                                    this.timePeriod.classList.add("error");
+                                    this.periodError.classList.add("show");
+                                    isValid = false;
+                                } else {
+                                    this.timePeriod.classList.remove("error");
+                                    this.periodError.classList.remove("show");
+                                }
+                                break;
+
+                            case "return":
+                                const returnValue = parseFloat(
+                                    this.expectedReturn.value,
+                                );
+                                if (
+                                    isNaN(returnValue) ||
+                                    returnValue < 1 ||
+                                    returnValue > 30
+                                ) {
+                                    this.expectedReturn.classList.add("error");
+                                    this.returnError.classList.add("show");
+                                    isValid = false;
+                                } else {
+                                    this.expectedReturn.classList.remove(
+                                        "error",
+                                    );
+                                    this.returnError.classList.remove("show");
+                                }
+                                break;
+                        }
+
+                        return isValid;
+                    }
+
+                    validateAllInputs() {
+                        const monthlyValid = this.validateInput("monthly");
+                        const periodValid = this.validateInput("period");
+                        const returnValid = this.validateInput("return");
+
+                        return monthlyValid && periodValid && returnValid;
+                    }
+
+                    calculateSIP() {
+                        if (!this.validateAllInputs()) {
+                            return;
+                        }
+
+                        // Add calculating state
+                        this.calculateBtn.classList.add("calculating");
+                        this.calculateBtn.textContent = "Calculating...";
+
+                        // Get input values
+                        const monthlyInvestment = parseFloat(
+                            this.monthlyInvestment.value,
+                        );
+                        const years = parseFloat(this.timePeriod.value);
+                        const annualReturn = parseFloat(
+                            this.expectedReturn.value,
+                        );
+
+                        // Calculate SIP
+                        const months = years * 12;
+                        const monthlyReturn = annualReturn / 12 / 100;
+
+                        // SIP Formula: FV = P × [((1 + r)^n - 1) / r] × (1 + r)
+                        const futureValue =
+                            monthlyInvestment *
+                            (((Math.pow(1 + monthlyReturn, months) - 1) /
+                                monthlyReturn) *
+                                (1 + monthlyReturn));
+
+                        const totalInvestmentAmount =
+                            monthlyInvestment * months;
+                        const totalReturnsAmount =
+                            futureValue - totalInvestmentAmount;
+
+                        // Simulate calculation delay for better UX
+                        setTimeout(() => {
+                            this.displayResults(
+                                totalInvestmentAmount,
+                                totalReturnsAmount,
+                                futureValue,
+                            );
+                            this.updateChart(
+                                totalInvestmentAmount,
+                                totalReturnsAmount,
+                            );
+
+                            // Remove calculating state
+                            this.calculateBtn.classList.remove("calculating");
+                            this.calculateBtn.textContent = "Calculate SIP";
+                        }, 300);
+                    }
+
+                    displayResults(
+                        totalInvestment,
+                        totalReturns,
+                        maturityAmount,
+                    ) {
+                        // Format currency
+                        const formatCurrency = (amount) => {
+                            return new Intl.NumberFormat("en-IN", {
+                                style: "currency",
+                                currency: "INR",
+                                maximumFractionDigits: 0,
+                            }).format(amount);
+                        };
+
+                        // Update result values
+                        this.totalInvestment.textContent =
+                            formatCurrency(totalInvestment);
+                        this.totalReturns.textContent =
+                            formatCurrency(totalReturns);
+                        this.maturityAmount.textContent =
+                            formatCurrency(maturityAmount);
+
+                        // Show results with animation
+                        this.resultsSection.style.display = "block";
+                        this.resultsSection.classList.add("show");
+
+                        // Remove animation class after animation completes
+                        setTimeout(() => {
+                            this.resultsSection.classList.remove("show");
+                        }, 300);
+                    }
+
+                    updateChart(totalInvestment, totalReturns) {
+                        const total = totalInvestment + totalReturns;
+                        const investmentPercentage =
+                            (totalInvestment / total) * 100;
+                        const returnsPercentage = (totalReturns / total) * 100;
+
+                        this.chartInvestment.style.width = `${investmentPercentage}%`;
+                        this.chartReturns.style.width = `${returnsPercentage}%`;
+                    }
+
+                    resetCalculator() {
+                        // Reset input values
+                        this.monthlyInvestment.value = 5000;
+                        this.monthlyInvestmentSlider.value = 5000;
+                        this.timePeriod.value = 10;
+                        this.timePeriodSlider.value = 10;
+                        this.expectedReturn.value = 12;
+                        this.expectedReturnSlider.value = 12;
+
+                        // Clear error states
+                        this.monthlyInvestment.classList.remove("error");
+                        this.timePeriod.classList.remove("error");
+                        this.expectedReturn.classList.remove("error");
+                        this.monthlyError.classList.remove("show");
+                        this.periodError.classList.remove("show");
+                        this.returnError.classList.remove("show");
+
+                        // Hide results
+                        this.resultsSection.style.display = "none";
+
+                        // Reset chart
+                        this.chartInvestment.style.width = "0%";
+                        this.chartReturns.style.width = "0%";
+
+                        // Recalculate with default values
+                        setTimeout(() => this.calculateSIP(), 100);
+                    }
+
+                    // Public method to get calculator state (useful for embedding)
+                    getCalculatorState() {
+                        return {
+                            monthlyInvestment: parseFloat(
+                                this.monthlyInvestment.value,
+                            ),
+                            timePeriod: parseFloat(this.timePeriod.value),
+                            expectedReturn: parseFloat(
+                                this.expectedReturn.value,
+                            ),
+                            isValid: this.validateAllInputs(),
+                        };
+                    }
+
+                    // Public method to set calculator values (useful for embedding)
+                    setCalculatorValues(values) {
+                        if (values.monthlyInvestment) {
+                            this.monthlyInvestment.value =
+                                values.monthlyInvestment;
+                            this.monthlyInvestmentSlider.value =
+                                values.monthlyInvestment;
+                        }
+                        if (values.timePeriod) {
+                            this.timePeriod.value = values.timePeriod;
+                            this.timePeriodSlider.value = values.timePeriod;
+                        }
+                        if (values.expectedReturn) {
+                            this.expectedReturn.value = values.expectedReturn;
+                            this.expectedReturnSlider.value =
+                                values.expectedReturn;
+                        }
+
+                        setTimeout(() => this.calculateSIP(), 100);
+                    }
+                }
+
+                // Initialize calculator when DOM is loaded
+                document.addEventListener("DOMContentLoaded", function () {
+                    window.sipCalculator = new SIPCalculator();
+                });
+
+                // Make calculator available globally for embedding purposes
+                window.SIPCalculator = SIPCalculator;
+            </script>
+        </div>
+    </body>
+</html>
